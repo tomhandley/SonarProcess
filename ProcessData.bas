@@ -1,31 +1,30 @@
-attribute VB_name = "ProcessData"
-option explicit
-'git branch
+Attribute VB_Name = "ProcessData"
+Option Explicit
 
-dim basepath, path, record as string  'path to R000XX_Final_Template, path to record, and record name
-dim fileprompt as VbMsgBoxResult
-dim mybook as Workbook  '000XX_Final_Template workbook path
-dim row as long  'row counter
-dim seconds as long  'counts number of full seconds in sonar file
-dim DEfile as string  'file path to Data_explorer index file
-dim RTKfile as string  'file path to RTK data file
-const tlen = 0.114  'transducer length from center of mounting pole to sonar projector
-'const utc_shift = 8  'set value to shift sonar times forward/back to match RTK times (UTC)
-    'for Pacific time, set to 8 for records during PST (winter Nov-Mar) and 7 during PDT (summer Mar-Nov)
-    'based on a sonar file stated in local time and RTK file stated in UTC time
-private type linear  'data type to store linear regression values
-    b As double  'slope of regression
-    a As double  'intercept of regression
-    n As integer  'number of points in regression
-end type
+Dim basepath, path, record As String  'path to R000XX_Final_Template, path to record, and record name
+Dim fileprompt As VbMsgBoxResult
+Dim mybook As Workbook  '000XX_Final_Template workbook path
+Dim row As Long  'Row counter
+Dim seconds As Long  'Counts number of full seconds in sonar file
+Dim DEfile As String  'file path to Data_explorer index file
+Dim RTKfile As String  'file path to RTK data file
+Const tlen = 0.114  'Transducer length from center of mounting pole to sonar projector
+'Const utc_shift = 8  'Set value to shift sonar times forward/back to match RTK times (UTC)
+    'For Pacific time, set to 8 for records during PST (winter Nov-Mar) and 7 during PDT (summer Mar-Nov)
+    'Based on a sonar file stated in local time and RTK file stated in UTC time
+Private Type linear  'Data type to store linear regression values
+    b As Double  'Slope of regression
+    a As Double  'Intercept of regression
+    n As Integer  'Number of points in regression
+End Type
 
-sub AssembleXYZ()
-attribute AssembleXYZ.VB_Description = "Process data from R000XX.DAT, R000XX.DAT.XYZ.csv and RTK files, interpolate missing data, smooth elevation and export bathymetry to R000XX.csv"
-attribute AssembleXYZ.VB_ProcData.VB_Invoke_Func = "D\n14"  'sets CTRL+SHIFT+D as keyboard shortcut
+Sub AssembleXYZ()
+Attribute AssembleXYZ.VB_Description = "Process data from R000XX.DAT, R000XX.DAT.XYZ.csv and RTK files, interpolate missing data, smooth elevation and export bathymetry to R000XX.csv"
+Attribute AssembleXYZ.VB_ProcData.VB_Invoke_Func = "D\n14"
 ' Process sonar, navigation and RTK data and export to csv
 '
 ' ****Functions****
-' imports data from \R000XX\B002.idx and R000XX.DAT.XYZ.csv to Sonar worksheet;
+' Imports data from \R000XX\B002.idx and R000XX.DAT.XYZ.csv to Sonar worksheet;
 ' imports RTK data and adds lines for missing times;
 ' averages sonar data over each second and outputs data to Combo worksheet;
 ' fills missing RTK data based on X- and Y-offsets interpolated from sonar data;
@@ -112,7 +111,7 @@ Dim IsFile As Boolean
 'Smooth RTK elevation points
     Critical
 
-'Update plotting ranges
+'Update Plotting ranges
     Sheets("TrackPlot").Select
     ActiveChart.FullSeriesCollection(1).XValues = "=Combo!$D$2:$D$" & seconds + 1  'Sonar X (Easting)
     ActiveChart.FullSeriesCollection(1).Values = "=Combo!$E$2:$E$" & seconds + 1  'Sonar Y (Northing)
